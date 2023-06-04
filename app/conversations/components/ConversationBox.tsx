@@ -7,17 +7,18 @@ import {useRouter} from "next/navigation";
 import clsx from "clsx";
 import Avatar from "@/app/components/sidebar/Avatar";
 import {format} from 'date-fns'
+import AvatarGroup from "@/app/components/AvatarGroup";
 
 interface ConversationBoxProps {
     data: FullConversationType,
     selected: boolean
 }
 
-const ConversationBox: React.FC<ConversationBoxProps> = ( { data, selected } ) => {
+const ConversationBox: React.FC<ConversationBoxProps> = ({data, selected}) => {
     const otherUser = useOtherUser(data);
     const session = useSession();
     const router = useRouter();
-    
+
     const handleClick = useCallback(
         () => {
             router.push(`/conversations/${data.id}`)
@@ -51,7 +52,8 @@ const ConversationBox: React.FC<ConversationBoxProps> = ( { data, selected } ) =
     const lastMessageText = useMemo(() => {
         if (lastMessage?.image) {
             return "Send an image"
-        };
+        }
+        ;
 
         if (lastMessage?.body) {
             return lastMessage.body;
@@ -61,8 +63,11 @@ const ConversationBox: React.FC<ConversationBoxProps> = ( { data, selected } ) =
     }, [lastMessage]);
 
     return (
-        <div onClick={handleClick} className={clsx(`w-full relative flex items-center space-x-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer p-3`, selected ? "bg-neutral-100" : "bg-white")}>
-            <Avatar user={otherUser} />
+        <div onClick={handleClick}
+             className={clsx(`w-full relative flex items-center space-x-3 hover:bg-neutral-100 rounded-lg transition cursor-pointer p-3`, selected ? "bg-neutral-100" : "bg-white")}>
+            {data.isGroup ? (<AvatarGroup users={data.users}/>) :
+                <Avatar user={otherUser}/>
+            }
             <div className={"min-w-0 flex-1"}>
                 <div className={"focus:outline-none"}>
                     <div className={"flex justify-between items-center mb-1"}>
