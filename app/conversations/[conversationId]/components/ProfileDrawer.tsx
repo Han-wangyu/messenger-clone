@@ -6,9 +6,9 @@ import {format} from "date-fns";
 import {Dialog, Transition} from "@headlessui/react";
 import {IoClose, IoTrash} from "react-icons/io5";
 import Avatar from "@/app/components/sidebar/Avatar";
-import Modal from "@/app/components/Modal";
 import ConfirmModal from "@/app/conversations/[conversationId]/components/ConfirmModal";
 import AvatarGroup from "@/app/components/AvatarGroup";
+import useActiveList from "@/app/hooks/useActiveList";
 
 interface ProfileDrawerProps {
     isOpen: boolean,
@@ -20,6 +20,9 @@ interface ProfileDrawerProps {
 
 const ProfileDrawer: React.FC<ProfileDrawerProps> = ({isOpen, onClose, data}) => {
     const otherUser = useOtherUser(data);
+
+    const { members } = useActiveList();
+    const isActive = members.indexOf(otherUser?.email!) !== -1;
 
     const [confirmOpen, setConfirmOpen] = useState(false);
 
@@ -36,8 +39,8 @@ const ProfileDrawer: React.FC<ProfileDrawerProps> = ({isOpen, onClose, data}) =>
             return `${data.users.length} members`
         }
 
-        return 'Active';
-    }, [data]);
+        return isActive ? 'Active' : "Offline";
+    }, [data.isGroup, data.users.length, isActive]);
 
     return (
         <>
